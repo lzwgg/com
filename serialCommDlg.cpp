@@ -67,6 +67,7 @@ BEGIN_MESSAGE_MAP(CserialCommDlg, CDialog)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDOK, &CserialCommDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_BTN_SEND, &CserialCommDlg::OnBnClickedBtnSend)
+	ON_BN_CLICKED(IDC_BTN_STOP, &CserialCommDlg::OnBnClickedBtnStop)
 END_MESSAGE_MAP()
 
 
@@ -229,8 +230,8 @@ void CserialCommDlg::OnBnClickedBtnConnect()
 		}
 		GetDlgItem(IDC_BTN_CONNECT)->SetWindowText(_T("取消"));
 		GetDlgItem(IDC_EDIT_DEAD)->SetWindowText(_T("已连接"));
-		SetTimer(1, 1000, NULL);
-		GetDlgItem(IDC_BTN_SAVE)->EnableWindow(FALSE);
+		SetTimer(1, 100, NULL);
+		//GetDlgItem(IDC_BTN_SAVE)->EnableWindow(FALSE);
 	}
 	else if (!name.Compare(_T("取消")))
 	{
@@ -279,6 +280,7 @@ void CserialCommDlg::OnBnClickedBtnSave()
 	// TODO: Add your control notification handler code here
 	CString fileName;
 	m_Edit_File.GetWindowText(fileName);
+	mySerialPort.useFileFlag = 0;
 	if (fileName.IsEmpty())
 	{
 		MessageBox(_T("请添加文件名！"));
@@ -440,4 +442,16 @@ void CserialCommDlg::OnBnClickedBtnSend()
 	{
 		GetDlgItem(IDC_EDIT_DEAD2)->SetWindowText(_T("发送失败"));
 	}
+}
+
+void CserialCommDlg::OnBnClickedBtnStop()
+{
+	// TODO: Add your control notification handler code here
+	if (!mySerialPort.useFileFlag)
+	{
+		return;
+	}
+	mySerialPort.useFileFlag = 0;
+	fclose(mySerialPort.fildes);
+	GetDlgItem(IDC_BTN_SAVE)->EnableWindow(TRUE);
 }
