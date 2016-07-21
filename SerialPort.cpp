@@ -82,25 +82,56 @@ void AddMonitorData (float *fdata, double (*monitorData)[50])
 
 UINT TransferChar2Float (char *data, float *fdata)
 {
+	union float_data {float dataf; char varf[4];} FloatData;
+	FloatData.varf[3] = data[0];
+	FloatData.varf[2] = data[1];
+	FloatData.varf[1] = data[2];
+	FloatData.varf[0] = data[3];
+	*fdata = FloatData.dataf;
+	return 0;
+}
+
+#if 0
+UINT TransferChar2Float (char *data, float *fdata)
+{
 	float out_data = 0.0;
 	int data_2, data_3, data_4;
 	int data_exp = ((data[0] && 0x7f) << 1)+ (data[1] >> 7) - 0x7f;
 	data_2 = data[1];
 	data_3 = data[2];
 	data_4 = data[3];
-	out_data = (float) ((((0x0001 << 23) +
-		((data_2 && 0x7f) << 16) +
-		(data_3 << 8) +
-		data_4) * 1.0) / (0x0001 << (23-data_exp)));
+	if (data_exp == -127)
+	{
+		out_data = 0.0;
+		/*
+		out_data = (float) ((( //(0x0001 << 23) +
+			((data_2 && 0x7f) << 16) +
+			(data_3 << 8) +
+			data_4) * 1.0) / (0x0001 << (23-data_exp)));
+			*/
+	}
+	else if (!data_exp)
+	{
+		AfxMessageBox(_T("数据为无穷大"));
+	}
+	else
+	{
+		out_data = (float) ((((0x0001 << 23) +
+			((data_2 && 0x7f) << 16) +
+			(data_3 << 8) +
+			data_4) * 1.0) / (0x0001 << (23-data_exp)));		
+	}
 	*fdata = out_data;
 	//MessageBox(NULL, _T("timer"), NULL, 0);
 	return 0;
 }
+#endif
 
 CSerialPort::~CSerialPort(void)  
 {
 	if (fildes)
 	{
+		useFileFlag = 0;
 		fclose(fildes);
 	}
     CloseListenTread();

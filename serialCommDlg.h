@@ -64,4 +64,5 @@ public:
 	CChartCtrl m_ChartWave3;
 	CChartCtrl m_ChartWave4;
 	afx_msg void OnBnClickedBtnSend();
+	afx_msg void OnBnClickedBtnStop();
 };
