@@ -13,7 +13,7 @@
 
 // CserialCommApp
 
-BEGIN_MESSAGE_MAP(CserialCommApp, CWinAppEx)
+BEGIN_MESSAGE_MAP(CserialCommApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
@@ -37,7 +37,7 @@ CserialCommApp theApp;
 BOOL CserialCommApp::InitInstance()
 {
 //TODO: call AfxInitRichEdit2() to initialize richedit2 library.
-	CWinAppEx::InitInstance();
+	CWinApp::InitInstance();
 
 	// Standard initialization
 	// If you are not using these features and wish to reduce the size

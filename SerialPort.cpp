@@ -25,7 +25,7 @@
 /** 线程退出标志 */   
 bool CSerialPort::s_bExit = false;  
 /** 当串口无数据时,sleep至下次查询间隔的时间,单位:秒 */   
-const UINT SLEEP_TIME_INTERVAL = 5;  
+const UINT SLEEP_TIME_INTERVAL = 0;  
  
 void InitMonitorData (void);
 
@@ -346,7 +346,21 @@ UINT CSerialPort::GetBytesInCOM()
  
     return BytesInQue;  
 }  
- 
+
+void recordTime(char *time)
+{ 
+	int len;
+	SYSTEMTIME st;
+	CString strDate, strTime;
+	TCHAR temp[40] = {0};
+	GetLocalTime(&st);
+	strDate.Format(_T("%4d-%2d-%2d"), st.wYear, st.wMonth, st.wDay);
+	strTime.Format(_T("%02d:%02d:%02d"), st.wHour, st.wMinute, st.wSecond);
+	_tcscpy(temp, strTime);
+	len = WideCharToMultiByte(CP_ACP, 0, temp, -1, NULL, 0, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, temp, -1, time, len, NULL, NULL);
+}
+
 UINT WINAPI CSerialPort::ListenThread( void* pParam )  
 {  
     /** 得到本类的指针 */   
@@ -400,7 +414,8 @@ UINT WINAPI CSerialPort::ListenThread( void* pParam )
 					//sprintf_s(dbuf, 255, "%d", pSerialPort->timeDiff);
 					//MultiByteToWideChar(CP_ACP, 0, dbuf, strlen(dbuf)+1, dbuf2, sizeof(dbuf2) / sizeof(dbuf2[0]));
 					//MessageBox(NULL, dbuf2, 0, 0);
-					if (pSerialPort->timeDiff > 46)
+					//if (pSerialPort->timeDiff > 46)
+					if (pSerialPort->timeDiff > 26)
 					{
 						// if this is a new frame
 						if (!pSerialPort->fcounter && !pSerialPort->counter)
@@ -430,13 +445,16 @@ UINT WINAPI CSerialPort::ListenThread( void* pParam )
 							if (3 == pSerialPort->counter)
 							{
 								TransferChar2Float(pSerialPort->data, &pSerialPort->fdata[pSerialPort->fcounter]);
+
 								if (3 == pSerialPort->fcounter)
 								{
 									if (pSerialPort->useFileFlag)
 									{
-										// write into file
+									// record the time
+										recordTime(pSerialPort->time);
+									// write into file
 										memset(fbuf, 0, sizeof(fbuf));
-										sprintf_s(fbuf, 255, "%.2f %.2f %.2f %.2f\r\n", pSerialPort->fdata[0],
+										sprintf_s(fbuf, 255, "%s %.8f %.8f %.8f %.8f\r\n", pSerialPort->time, pSerialPort->fdata[0],
 											pSerialPort->fdata[1], pSerialPort->fdata[2], pSerialPort->fdata[3]);
 										fwrite(fbuf, strlen(fbuf), 1, pSerialPort->fildes);
 									}
