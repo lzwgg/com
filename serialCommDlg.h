@@ -6,7 +6,7 @@
 
 #include "SerialPort.h"
 #include "afxwin.h"
-#include "d:\programme\serialcomm\serialcomm\serialcomm\chartclass\chartctrl.h"
+#include "chartclass\chartctrl.h"
 #include "afxcmn.h"
 
 // CserialCommDlg dialog

@@ -15,7 +15,7 @@
 // See serialComm.cpp for the implementation of this class
 //
 
-class CserialCommApp : public CWinAppEx
+class CserialCommApp : public CWinApp
 {
 public:
 	CserialCommApp();

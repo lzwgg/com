@@ -188,6 +188,8 @@ public:
 	UINT needWait50msFlag;
 	/* record the float data */
 	float fdata[4];
+	// record the time
+	char time[40];
 	/* record the sum data length for fdata less than 4 */
 	UINT fcounter;
 };  
